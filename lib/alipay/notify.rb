@@ -1,8 +1,8 @@
 module Alipay
   module Notify
-    def validate?(params, options = {})
+    def valid?(params)
       params = Utils.stringify_keys(params)
-      Sign.verify?(params, options) &&
+      Sign.verify?(params, key: @app_private_key) &&
         Alipay::Notify.verify_notify_id?(@app_id, params['notify_id'], url: @url)
     end
 

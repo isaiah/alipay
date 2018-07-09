@@ -21,7 +21,7 @@ class Alipay::CrossBorder::ClientTest < Minitest::Test
     @unsign_params = @params.merge(sign_type: 'MD5', sign: 'xxxx')
     @sign_params = @params.merge(
       sign_type: 'MD5',
-      sign: '22fc7e38e5acdfede396aa463870d111'
+      sign: '9e706619fdf93af82ea96c6c8fd6a4f1'
     )
 
   end
@@ -57,7 +57,7 @@ class Alipay::CrossBorder::ClientTest < Minitest::Test
     stub_request(
       :get, "https://openapi.alipaydev.com/gateway.do?service=notify_verify&partner=#{PARTNER}&notify_id=1234"
     ).to_return(body: "true")
-    assert @client.validate?(@sign_params)
+    assert @client.valid?(@sign_params)
   end
 
 EXPECTED_FORM_J =<<EOF
