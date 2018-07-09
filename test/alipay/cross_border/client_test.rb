@@ -60,6 +60,20 @@ class Alipay::CrossBorder::ClientTest < Minitest::Test
     assert @client.valid?(@sign_params)
   end
 
+  def test_refund
+    body =<<EOF
+<?xml version="1.0" encoding="GBK"?>
+<alipay>
+    <is_success>T</is_success>    
+</alipay>
+EOF
+    url = %r{.*?gateway.do\?_input_charset=utf-8&currency=USD&gmt_return=\d+&notify_url=http://63a62ee5.ngrok.io/notify&out_return_no=abc&out_trade_no=123&partner=2088621891276675&product_code=NEW_OVERSEAS_SELLER&return_amount=100.00&return_url=http://63a62ee5.ngrok.io&service=forex_refund&sign=\w+?&sign_type=MD5}
+    stub_request(:get, url).to_return(body: body)
+
+    resp = @client.refund(refund_no: 'abc', order_id: '123', amount: '100.00', currency: 'USD', reason: 'rejected')
+    assert resp[:success]
+  end
+
 EXPECTED_FORM_J =<<EOF
 <form id='alipaysubmit' name='alipaysubmit' action='https://openapi.alipaydev.com/gateway.do' method='GET'><input type='hidden' name=\"_input_charset\" value=\"utf-8\"/><input type='hidden' name=\"body\" value=\"test\"/><input type='hidden' name=\"currency\" value=\"USD\"/><input type='hidden' name=\"notify_url\" value=\"http://63a62ee5.ngrok.io/notify\"/><input type='hidden' name=\"out_trade_no\" value=\"test20180709155547\"/><input type='hidden' name=\"partner\" value=\"2088621891276675\"/><input type='hidden' name=\"product_code\" value=\"NEW_OVERSEAS_SELLER\"/><input type='hidden' name=\"return_url\" value=\"http://63a62ee5.ngrok.io\"/><input type='hidden' name=\"service\" value=\"create_forex_trade\"/><input type='hidden' name=\"sign\" value=\"0f76b157662f430defb9b71fd0349a18\"/><input type='hidden' name=\"sign_type\" value=\"MD5\"/><input type='hidden' name=\"split_fund_info\" value=\"[{'transIn':'2088621891276664','amount':'0.10','currency':'USD','desc':'Split _test1'}]\"/><input type='hidden' name=\"subject\" value=\"test123\"/><input type='hidden' name=\"total_fee\" value=\"1.00\"/><input type='submit' value='ok' style='display:none'></form><script>document.forms['alipaysubmit'].submit();</script>
 EOF

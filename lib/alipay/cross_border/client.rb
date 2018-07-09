@@ -1,5 +1,6 @@
 require 'active_support/core_ext/hash'
 require 'alipay/notify'
+require 'nokogiri'
 module Alipay
   module CrossBorder
     class Client
@@ -191,6 +192,22 @@ module Alipay
         else
           raise "Unsupported sign_type: #{@sign_type}"
         end
+      end
+
+      def refund(refund_no:, order_id:, amount:, currency:, reason: nil)
+        params = prepare_params(out_return_no: refund_no,
+                                out_trade_no: order_id,
+                                return_amount: amount,
+                                currency: currency,
+                                gmt_return: Time.now.getlocal("+08:00").strftime("%Y%m%d%H%M%S"),
+                                service: 'forex_refund')
+
+        uri = URI(@url)
+        uri.query = URI.encode_www_form(params)
+        resp = Net::HTTP.get(uri)
+        doc = Nokogiri::XML(resp)
+        {success: doc.xpath('/alipay/is_success').text == 'T',
+         error: doc.xpath('//error').text}
       end
 
       private
