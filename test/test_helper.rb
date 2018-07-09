@@ -32,3 +32,23 @@ RBl/t9djgTI58FEuXxUQ7mYCOvSQi5rO4J/CY4TR5KDMksmZUYB1BQJAIEfVDxz4
 DEorJMaPK5vXiA==
 -----END PRIVATE KEY-----
 EOF
+
+TEST_MD5_KEY = "6cgz2arb7djrp0ohrcz580a4sl1n0pfz"
+
+PARTNER = "2088621891276675"
+
+# 服务器异步通知页面路径，不能加?id=123这类自定义参数，必须外网可以正常访问
+#Page for receiving asynchronous Notification. It should be accessable from outer net.No custom parameters like '?id=123' permitted.
+NOTIFY_URL = "http://63a62ee5.ngrok.io/notify"
+
+# 页面跳转同步通知页面路径 需http://格式的完整路径，不能加?id=123这类自定义参数，必须外网可以正常访问
+#Page for synchronous notification.It should be accessable from outer net.No custom parameters like '?id=123' permitted.
+RETURN_URL = "http://63a62ee5.ngrok.io"
+
+# 签名方式
+#sign_type
+SIGN_TYPE = "MD5"
+
+PAYMENT_SERVICE = "create_forex_trade"
+
+INPUT_CHARSET = "utf-8"
