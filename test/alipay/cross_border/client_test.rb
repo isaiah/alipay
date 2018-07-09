@@ -35,32 +35,15 @@ class Alipay::CrossBorder::ClientTest < Minitest::Test
     params = {
       body: 'test',
       currency: 'USD',
-      out_trade_no: 'test20180709121544',
-      split_fund_info: '[{"transIn":"2088621891276664","amount":"0.01","currency":"USD","desc":"Split _test1"}]',
+      out_trade_no: 'test20180709155547',
+      split_fund_info: "[{'transIn':'2088621891276664','amount':'0.10','currency':'USD','desc':'Split _test1'}]",
       subject: 'test123',
-      'total_fee': '0.1',
+      total_fee: '1.00',
     }
-    assert_equal EXPECTED_FORM.gsub("\n", ''), @client.page_execute_form(params)
+    assert_equal EXPECTED_FORM_J.gsub("\n", ''), @client.page_execute_form(params)
   end
 
-  EXPECTED_FORM = <<EOF
-<form id='alipaysubmit' name='alipaysubmit' action='https://openapi.alipaydev.com/gateway.do' method='POST'>
-<input type='hidden' name='_input_charset' value='utf-8'/>
-<input type='hidden' name='body' value='test'/>
-<input type='hidden' name='currency' value='USD'/>
-<input type='hidden' name='notify_url' value='#{NOTIFY_URL}'/>
-<input type='hidden' name='out_trade_no' value='test20180709121544'/>
-<input type='hidden' name='partner' value='#{PARTNER}'/>
-<input type='hidden' name='product_code' value='NEW_OVERSEAS_SELLER'/>
-<input type='hidden' name='return_url' value='#{RETURN_URL}'/>
-<input type='hidden' name='service' value='create_forex_trade'/>
-<input type='hidden' name='split_fund_info' value='[{"transIn":"2088621891276664","amount":"0.01","currency":"USD","desc":"Split _test1"}]'/>
-<input type='hidden' name='subject' value='test123'/>
-<input type='hidden' name='total_fee' value='0.1'/>
-<input type='hidden' name='sign' value='3d826bacd9f06a52be7d1555d248bb3a'/>
-<input type='hidden' name='sign_type' value='MD5'/>
-<input type='submit' value='OK' style='dislay:none'>
-</form>
-<script>document.forms['alipaysubmit'].submit();</script>
+EXPECTED_FORM_J =<<EOF
+<form id='alipaysubmit' name='alipaysubmit' action='https://openapi.alipaydev.com/gateway.do' method='POST'><input type='hidden' name='_input_charset' value='utf-8'/><input type='hidden' name='body' value='test'/><input type='hidden' name='currency' value='USD'/><input type='hidden' name='notify_url' value='http://63a62ee5.ngrok.io/notify'/><input type='hidden' name='out_trade_no' value='test20180709155547'/><input type='hidden' name='partner' value='2088621891276675'/><input type='hidden' name='product_code' value='NEW_OVERSEAS_SELLER'/><input type='hidden' name='return_url' value='http://63a62ee5.ngrok.io'/><input type='hidden' name='service' value='create_forex_trade'/><input type='hidden' name='sign' value='0f76b157662f430defb9b71fd0349a18'/><input type='hidden' name='sign_type' value='MD5'/><input type='hidden' name='split_fund_info' value='[{'transIn':'2088621891276664','amount':'0.10','currency':'USD','desc':'Split _test1'}]'/><input type='hidden' name='subject' value='test123'/><input type='hidden' name='total_fee' value='1.00'/><input type='submit' value='ok' style='display:none'></form><script>document.forms['alipaysubmit'].submit();</script>
 EOF
 end

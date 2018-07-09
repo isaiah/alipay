@@ -118,7 +118,7 @@ module Alipay
 
         html = %Q(<form id='alipaysubmit' name='alipaysubmit' action='#{@url}' method='POST'>)
         params.keys.sort.each do |key|
-          html << %Q(<input type='hidden' name='#{key}' value='#{params[key].gsub("'", "&apos;")}'/>)
+          html << %Q(<input type='hidden' name='#{key}' value='#{params[key]}'/>)
         end
         html << "<input type='submit' value='ok' style='display:none'></form>"
         html << "<script>document.forms['alipaysubmit'].submit();</script>"
@@ -194,14 +194,17 @@ module Alipay
       private
 
       def prepare_params(params)
+        params = ::Alipay::Utils.stringify_keys(params)
+        params['split_fund_info'] &&= params['split_fund_info'].gsub("\"", "'")
+
         params = @options.slice('return_url', 'notify_url').merge({
           'partner' => @app_id,
           '_input_charset' => @charset,
-          'sign_type' => @sign_type,
           'product_code' => PRODUCT_CODE,
           'service' => PAYMENT_SERVICE,
-        }).merge(::Alipay::Utils.stringify_keys(params))
+        }).merge(params.except('sign', 'sign_type')).reject{|k, v| !v}
         params['sign'] = sign(params)
+        params['sign_type'] = @sign_type
         params
       end
 

@@ -3,6 +3,7 @@ module Alipay
     def self.stringify_keys(hash)
       new_hash = {}
       hash.each do |key, value|
+        next unless value
         new_hash[(key.to_s rescue key) || key] = value
       end
       new_hash
