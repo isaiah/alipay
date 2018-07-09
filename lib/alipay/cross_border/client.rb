@@ -1,7 +1,9 @@
 require 'active_support/core_ext/hash'
+require 'alipay/notify'
 module Alipay
   module CrossBorder
     class Client
+      include Alipay::Notify
       #沙箱网关The Alipay gateway of sandbox environment.
       ALIPAY_GATEWAY_SANDBOX_NEW = "https://openapi.alipaydev.com/gateway.do"
       #生产环境网关，如果商户用的生产环境请换成下面的正式网关
@@ -44,7 +46,7 @@ module Alipay
         @sign_type = options['sign_type'] || 'RSA2'
         @app_private_key = options['app_private_key']
         @alipay_public_key = options['alipay_public_key']
-        if @sign_key = 'MD5'
+        if @sign_type == 'MD5'
           key = @app_private_key || @alipay_public_key
           @app_private_key = @alipay_public_key = key
         end

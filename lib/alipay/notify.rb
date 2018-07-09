@@ -1,13 +1,20 @@
 module Alipay
   module Notify
-    def self.verify?(params, options = {})
+    def validate?(params, options = {})
       params = Utils.stringify_keys(params)
-      pid = options[:pid] || Alipay.pid
-      Sign.verify?(params, options) && verify_notify_id?(pid, params['notify_id'])
+      Sign.verify?(params, options) &&
+        Alipay::Notify.verify_notify_id?(@app_id, params['notify_id'], url: @url)
     end
 
-    def self.verify_notify_id?(pid, notify_id)
-      uri = URI("https://mapi.alipay.com/gateway.do")
+    module_function
+
+    def self.verify?(params, options = {})
+      params = Utils.stringify_keys(params)
+      Sign.verify?(params, options) && verify_notify_id?(Alipay.pid, params['notify_id'])
+    end
+
+    def self.verify_notify_id?(pid, notify_id, url: "https://mapi.alipay.com/gateway.do")
+      uri = URI(url)
       uri.query = URI.encode_www_form(
         'service'   => 'notify_verify',
         'partner'   => pid,

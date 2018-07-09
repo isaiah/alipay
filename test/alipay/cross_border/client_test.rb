@@ -14,6 +14,16 @@ class Alipay::CrossBorder::ClientTest < Minitest::Test
       alipay_public_key: TEST_MD5_KEY,
       sign_type: 'MD5'
     )
+
+    @params = {
+      notify_id: '1234',
+    }
+    @unsign_params = @params.merge(sign_type: 'MD5', sign: 'xxxx')
+    @sign_params = @params.merge(
+      sign_type: 'MD5',
+      sign: '22fc7e38e5acdfede396aa463870d111'
+    )
+
   end
 
   def test_cross_border_page_payment_signature
@@ -41,6 +51,13 @@ class Alipay::CrossBorder::ClientTest < Minitest::Test
       total_fee: '1.00',
     }
     assert_equal EXPECTED_FORM_J.gsub("\n", ''), @client.page_execute_form(params)
+  end
+
+  def test_verify_notify_when_true
+    stub_request(
+      :get, "https://openapi.alipaydev.com/gateway.do?service=notify_verify&partner=#{PARTNER}&notify_id=1234"
+    ).to_return(body: "true")
+    assert @client.validate?(@sign_params)
   end
 
 EXPECTED_FORM_J =<<EOF
