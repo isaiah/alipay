@@ -9,7 +9,7 @@ module Alipay
       ALIPAY_GATEWAY_SANDBOX_NEW = "https://openapi.alipaydev.com/gateway.do"
       #生产环境网关，如果商户用的生产环境请换成下面的正式网关
       #The Alipay gateway of production environment.(pls use the below line instead if you were in production environment)
-      ALIPAY_GATEWAY_PRODUCTION_NEW = "https://mapi.alipay.com/gateway.do"
+      ALIPAY_GATEWAY_PRODUCTION_NEW = "https://intlmapi.alipay.com/gateway.do"
 
       PRODUCT_CODE = 'NEW_OVERSEAS_SELLER'
       PAYMENT_SERVICE = 'create_forex_trade'

@@ -4,7 +4,7 @@ class Alipay::CrossBorder::ClientTest < Minitest::Test
 
   def setup
     @client = Alipay::CrossBorder::Client.new(
-      url: 'https://openapi.alipaydev.com/gateway.do',
+      env: 'sandbox',
       partner: PARTNER,
       notify_url: NOTIFY_URL,
       return_url: RETURN_URL,
