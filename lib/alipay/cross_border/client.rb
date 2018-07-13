@@ -211,7 +211,8 @@ module Alipay
       end
 
       def query_transaction_status(order_id)
-        params = prepare_params(out_trade_no: order_id)
+        params = prepare_params(out_trade_no: order_id,
+                                service: 'single_trade_query')
         uri = URI(@url)
         uri.query = URI.encode_www_form(params)
         resp = Net::HTTP.get(uri)
@@ -219,8 +220,9 @@ module Alipay
 
         {
           success: doc.xpath('/alipay/is_success').text == 'T',
+          error: doc.xpath('/alipay/error'),
           status: doc.xpath('//trade/trade_status').text,
-          error: doc.xpath('/alipay/error')
+          transaction_no: doc.xpath('//trade/trade_no').text,
         }
       end
 

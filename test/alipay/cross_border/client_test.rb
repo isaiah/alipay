@@ -79,6 +79,7 @@ EOF
     resp = @client.query_transaction_status('123')
     assert resp[:success]
     assert_equal 'TRADE_FINISHED', resp[:status]
+    assert_equal '2017061521001003550204235677', resp[:transaction_no]
   end
 
 EXPECTED_FORM_J =<<EOF
