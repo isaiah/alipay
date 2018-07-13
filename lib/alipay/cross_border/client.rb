@@ -210,6 +210,20 @@ module Alipay
          error: doc.xpath('//error').text}
       end
 
+      def query_transaction_status(order_id)
+        params = prepare_params(out_trade_no: order_id)
+        uri = URI(@url)
+        uri.query = URI.encode_www_form(params)
+        resp = Net::HTTP.get(uri)
+        doc = Nokogiri::XML(resp)
+
+        {
+          success: doc.xpath('/alipay/is_success').text == 'T',
+          status: doc.xpath('//trade/trade_status').text,
+          error: doc.xpath('/alipay/error')
+        }
+      end
+
       private
 
       def prepare_params(params)

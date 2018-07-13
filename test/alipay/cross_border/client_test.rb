@@ -74,7 +74,56 @@ EOF
     assert resp[:success]
   end
 
+  def test_query_transaction_status
+    stub_request(:get, /.*?gateway\.do/).to_return(body: FINISHED_TX)
+    resp = @client.query_transaction_status('123')
+    assert resp[:success]
+    assert_equal 'TRADE_FINISHED', resp[:status]
+  end
+
 EXPECTED_FORM_J =<<EOF
 <form id='alipaysubmit' name='alipaysubmit' action='https://openapi.alipaydev.com/gateway.do' method='GET'><input type='hidden' name=\"_input_charset\" value=\"utf-8\"/><input type='hidden' name=\"body\" value=\"test\"/><input type='hidden' name=\"currency\" value=\"USD\"/><input type='hidden' name=\"notify_url\" value=\"http://63a62ee5.ngrok.io/notify\"/><input type='hidden' name=\"out_trade_no\" value=\"test20180709155547\"/><input type='hidden' name=\"partner\" value=\"2088621891276675\"/><input type='hidden' name=\"product_code\" value=\"NEW_OVERSEAS_SELLER\"/><input type='hidden' name=\"return_url\" value=\"http://63a62ee5.ngrok.io\"/><input type='hidden' name=\"service\" value=\"create_forex_trade\"/><input type='hidden' name=\"sign\" value=\"0f76b157662f430defb9b71fd0349a18\"/><input type='hidden' name=\"sign_type\" value=\"MD5\"/><input type='hidden' name=\"split_fund_info\" value=\"[{'transIn':'2088621891276664','amount':'0.10','currency':'USD','desc':'Split _test1'}]\"/><input type='hidden' name=\"subject\" value=\"test123\"/><input type='hidden' name=\"total_fee\" value=\"1.00\"/><input type='submit' value='ok' style='display:none'></form><script>document.forms['alipaysubmit'].submit();</script>
+EOF
+
+FINISHED_TX =<<EOF
+<alipay>
+<is_success>T</is_success>
+<request>
+<param name="_input_charset">UTF-8</param>
+<param name="service">single_trade_query</param>
+<param name="partner">2088721091300630</param>
+<param name="out_trade_no">2009011803596246</param>
+<param name="sendFormat">normal</param>
+</request>
+<response>
+<trade>
+<body>hello</body>
+<buyer_email>intltest059@service.alipay.com</buyer_email>
+<buyer_id>2088122921745555</buyer_id>
+<discount>0.00</discount>
+<flag_trade_locked>0</flag_trade_locked>
+<gmt_create>2017-06-15 16:25:31</gmt_create>
+<gmt_last_modified_time>2017-06-15 16:25:58</gmt_last_modified_time>
+<gmt_payment>2017-06-15 16:25:58</gmt_payment>
+<is_total_fee_adjust>F</is_total_fee_adjust>
+<operator_role>B</operator_role>
+<out_trade_no>2009011803596246</out_trade_no>
+<payment_type>100</payment_type>
+<price>0.02</price>
+<quantity>1</quantity>
+<seller_email>test@126.com</seller_email>
+<seller_id>2088721091300630</seller_id>
+<subject>world</subject>
+<to_buyer_fee>0.00</to_buyer_fee>
+<to_seller_fee>0.02</to_seller_fee>
+<total_fee>0.02</total_fee>
+<trade_no>2017061521001003550204235677</trade_no>
+<trade_status>TRADE_FINISHED</trade_status>
+<use_coupon>F</use_coupon>
+</trade>
+</response>
+<sign>6283ce0cf5aaa812d9c1d29719d53e8d</sign>
+<sign_type>MD5</sign_type>
+</alipay>
 EOF
 end
