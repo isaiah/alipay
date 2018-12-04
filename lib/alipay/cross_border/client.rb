@@ -18,7 +18,7 @@ module Alipay
       #
       # Example:
       #
-      #   alipay_client = Alipay::Client.new(
+      #   alipay_client = Alipay::CrossBorder::Client.new(
       #     env: 'sandbox',
       #     app_id: '2016000000000000',
       #     app_private_key: APP_PRIVATE_KEY,
@@ -192,6 +192,13 @@ module Alipay
         else
           raise "Unsupported sign_type: #{@sign_type}"
         end
+      end
+
+      def sign_autodebit
+        params = prepare_params(service: 'alipay.dut.customer.agreement.page.sign',
+                                product_code: 'GENERAL_WITHHOLDING_P',
+                                sales_product_code: 'FOREX_GENERAL_WITHHOLDING')
+        page_execute_form(params)
       end
 
       def refund(refund_no:, order_id:, amount:, currency:, reason: nil)
