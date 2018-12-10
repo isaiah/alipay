@@ -195,9 +195,9 @@ module Alipay
       end
 
       def sign_autodebit(opts = {})
-        params = prepare_params(service: 'alipay.dut.customer.agreement.page.sign',
+        params = { service: 'alipay.dut.customer.agreement.page.sign',
                                 product_code: 'GENERAL_WITHHOLDING_P',
-                                sales_product_code: 'FOREX_GENERAL_WITHHOLDING')
+                                sales_product_code: 'FOREX_GENERAL_WITHHOLDING' }
         page_execute_form(params.merge(opts))
       end
 
