@@ -202,18 +202,19 @@ module Alipay
         page_execute_url(params.merge(opts))
       end
 
-      def unsign(alipay_user_id)
+      def unsign(agreement_token, alipay_user_id: nil)
         doc = sdk_execute(service: 'alipay.dut.customer.agreement.unsign',
                           product_code: 'GENERAL_WITHHOLDING_P',
+                          external_sign_no: agreement_token,
                           alipay_user_id: alipay_user_id)
         {success: doc.xpath('/alipay/is_success').text == 'T',
          error: doc.xpath('//error').text}
       end
 
-      def query_agreement(alipay_user_id)
+      def query_agreement(token:)
         doc = sdk_execute(service: 'alipay.dut.customer.agreement.query',
                           product_code: 'GENERAL_WITHHOLDING_P',
-                          alipay_user_id: alipay_user_id)
+                          external_sign_no: token)
         {success: doc.xpath('/alipay/is_success').text == 'T',
          error: doc.xpath('//error').text,
          status: doc.xpath('//status').text}
@@ -222,7 +223,6 @@ module Alipay
       def charge(agreement_number:, amount:, order_id:, subject:, description:, notify_url:, show_url:)
         doc = sdk_execute(service: 'alipay.acquire.createandpay',
                           product_code: 'GENERAL_WITHHOLDING_P',
-                          alipay_user_id: alipay_user_id,
                           out_trade_no: order_id,
                           notify_url: notify_url,
                           show_url: show_url,
@@ -238,11 +238,11 @@ module Alipay
 
       def refund(refund_no:, order_id:, amount:, currency:, reason: nil)
         doc = sdk_execute(out_return_no: refund_no,
-                                out_trade_no: order_id,
-                                return_amount: amount,
-                                currency: currency,
-                                gmt_return: Time.now.getlocal("+08:00").strftime("%Y%m%d%H%M%S"),
-                                service: 'forex_refund')
+                          out_trade_no: order_id,
+                          return_amount: amount,
+                          currency: currency,
+                          gmt_return: Time.now.getlocal("+08:00").strftime("%Y%m%d%H%M%S"),
+                          service: 'forex_refund')
 
         {success: doc.xpath('/alipay/is_success').text == 'T',
          error: doc.xpath('//error').text}
@@ -273,7 +273,7 @@ module Alipay
         params = @options.slice('return_url', 'notify_url').merge({
           'partner' => @app_id,
           '_input_charset' => @charset,
-          'product_code' => PRODUCT_CODE,
+          #'product_code' => PRODUCT_CODE,
           'service' => PAYMENT_SERVICE,
         }).merge(params.except('sign', 'sign_type')).reject{|k, v| !v}
         params['sign'] = sign(params)
