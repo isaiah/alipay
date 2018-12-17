@@ -72,9 +72,10 @@ module Alipay
       #   )
       #   # => 'app_id=2016000000000000&charset=utf-8&sig....'
       def sdk_execute(params)
-        params = prepare_params(params)
-
-        URI.encode_www_form(params)
+        uri = URI(@url)
+        uri.query = URI.encode_www_form(prepare_params(params))
+        resp = Net::HTTP.get(uri)
+        Nokogiri::XML(resp)
       end
 
       # Generate a url that use to redirect user to Alipay payment page.
@@ -196,23 +197,53 @@ module Alipay
 
       def sign_autodebit(opts = {})
         params = { service: 'alipay.dut.customer.agreement.page.sign',
-                                product_code: 'GENERAL_WITHHOLDING_P',
-                                sales_product_code: 'FOREX_GENERAL_WITHHOLDING' }
+                   product_code: 'GENERAL_WITHHOLDING_P',
+                   sales_product_code: 'FOREX_GENERAL_WITHHOLDING' }
         page_execute_form(params.merge(opts))
       end
 
+      def unsign(alipay_user_id)
+        doc = sdk_execute(service: 'alipay.dut.customer.agreement.unsign',
+                          product_code: 'GENERAL_WITHHOLDING_P',
+                          alipay_user_id: alipay_user_id)
+        {success: doc.xpath('/alipay/is_success').text == 'T',
+         error: doc.xpath('//error').text}
+      end
+
+      def query_agreement(alipay_user_id)
+        doc = sdk_execute(service: 'alipay.dut.customer.agreement.query',
+                          product_code: 'GENERAL_WITHHOLDING_P',
+                          alipay_user_id: alipay_user_id)
+        {success: doc.xpath('/alipay/is_success').text == 'T',
+         error: doc.xpath('//error').text,
+         status: doc.xpath('//status').text}
+      end
+
+      def charge(agreement_number:, amount:, order_id:, subject:, description:, notify_url:, show_url:)
+        doc = sdk_execute(service: 'alipay.acquire.createandpay',
+                          product_code: 'GENERAL_WITHHOLDING_P',
+                          alipay_user_id: alipay_user_id,
+                          out_trade_no: order_id,
+                          notify_url: notify_url,
+                          show_url: show_url,
+                          subject: subject,
+                          body: description,
+                          total_fee: amount,
+                          agreement_info: { agreement_no: agreement_number })
+        {success: doc.xpath('/alipay/is_success').text == 'T',
+         error: doc.xpath('//error').text,
+         transaction_no: doc.xpath('/response/alipay/trade_no').text,
+         result_code: doc.xpath('/response/alipay/result_code').text }
+      end
+
       def refund(refund_no:, order_id:, amount:, currency:, reason: nil)
-        params = prepare_params(out_return_no: refund_no,
+        doc = sdk_execute(out_return_no: refund_no,
                                 out_trade_no: order_id,
                                 return_amount: amount,
                                 currency: currency,
                                 gmt_return: Time.now.getlocal("+08:00").strftime("%Y%m%d%H%M%S"),
                                 service: 'forex_refund')
 
-        uri = URI(@url)
-        uri.query = URI.encode_www_form(params)
-        resp = Net::HTTP.get(uri)
-        doc = Nokogiri::XML(resp)
         {success: doc.xpath('/alipay/is_success').text == 'T',
          error: doc.xpath('//error').text}
       end
