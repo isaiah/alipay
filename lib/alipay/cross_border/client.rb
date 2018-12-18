@@ -195,11 +195,17 @@ module Alipay
         end
       end
 
-      def sign_autodebit(opts = {})
-        params = { service: 'alipay.dut.customer.agreement.page.sign',
-                   product_code: 'GENERAL_WITHHOLDING_P',
-                   sales_product_code: 'FOREX_GENERAL_WITHHOLDING' }
-        page_execute_url(params.merge(opts))
+      def sign_autodebit(token:, access_channel: 'PC', scene: 'INDUSTRY|TAVEL')
+        params = {
+          access_info: '{"channel": "' + access_channel + '"}',
+          external_sign_no: token,
+          scene: scene,
+          third_party_type: 'PARTNER',
+          service: 'alipay.dut.customer.agreement.page.sign',
+          product_code: 'GENERAL_WITHHOLDING_P',
+          sales_product_code: 'FOREX_GENERAL_WITHHOLDING'
+        }
+        page_execute_url(params)
       end
 
       def unsign(agreement_token, alipay_user_id: nil)
