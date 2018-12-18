@@ -208,11 +208,12 @@ module Alipay
         page_execute_url(params)
       end
 
-      def unsign(agreement_token, alipay_user_id: nil)
+      def unsign_autodebit(agreement_token, notify_url: nil)
         doc = sdk_execute(service: 'alipay.dut.customer.agreement.unsign',
                           product_code: 'GENERAL_WITHHOLDING_P',
                           external_sign_no: agreement_token,
-                          alipay_user_id: alipay_user_id)
+                          notify_url: notify_url
+                         )
         {success: doc.xpath('/alipay/is_success').text == 'T',
          error: doc.xpath('//error').text}
       end
