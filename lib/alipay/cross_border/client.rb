@@ -229,20 +229,34 @@ module Alipay
          status: doc.xpath('//status').text}
       end
 
-      def charge(agreement_number:, amount:, order_id:, subject:, description:, notify_url:, show_url:)
+      def charge(agreement_number:, amount:, currency:, order_id:, subject:, description:, notify_url:, show_url:, scene: 'INDUSTRY|TRAVEL')
         doc = sdk_execute(service: 'alipay.acquire.createandpay',
-                          product_code: 'GENERAL_WITHHOLDING_P',
+                          product_code: 'FOREX_GENERAL_WITHHOLDING',
                           out_trade_no: order_id,
                           notify_url: notify_url,
                           show_url: show_url,
                           subject: subject,
                           body: description,
+                          currency: currency,
+                          scene: scene,
                           total_fee: amount,
-                          agreement_info: { agreement_no: agreement_number })
+                          agreement_info: "{ \"agreement_no\": \"#{agreement_number}\" }")
         {success: doc.xpath('/alipay/is_success').text == 'T',
          error: doc.xpath('//error').text,
          transaction_no: doc.xpath('/response/alipay/trade_no').text,
          result_code: doc.xpath('/response/alipay/result_code').text }
+      end
+
+      def refund_autodebit(order_id:, amount:, currency:, reason: nil)
+        sdk_execute(out_trade_no: order_id,
+                    refund_amount: amount,
+                    refund_reason: reason,
+                    trans_currency: currency,
+                    service: 'alipay.acquire.refund')
+      end
+
+      def query_autodebit_transaction(order_id:)
+        sdk_execute(out_trade_no: order_id, service: 'alipay.acquire.query')
       end
 
       def refund(refund_no:, order_id:, amount:, currency:, reason: nil)
