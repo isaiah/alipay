@@ -208,20 +208,21 @@ module Alipay
         page_execute_url(params)
       end
 
-      def unsign_autodebit(agreement_token, notify_url: nil, scene: 'INDUSTRY|TRAVEL')
+      def unsign_autodebit(token: token, notify_url: nil, scene: 'INDUSTRY|TRAVEL')
         doc = sdk_execute(service: 'alipay.dut.customer.agreement.unsign',
                           scene: scene,
                           product_code: 'GENERAL_WITHHOLDING_P',
-                          external_sign_no: agreement_token,
+                          external_sign_no: token,
                           notify_url: notify_url
                          )
         {success: doc.xpath('/alipay/is_success').text == 'T',
          error: doc.xpath('//error').text}
       end
 
-      def query_agreement(token:)
+      def query_autodebit(token:, scene: 'INDUSTRY|TRAVEL')
         doc = sdk_execute(service: 'alipay.dut.customer.agreement.query',
-                          product_code: 'GENERAL_WITHHOLDING_P',
+                          product_code: 'FOREX_GENERAL_WITHHOLDING',
+                          scene: scene,
                           external_sign_no: token)
         {success: doc.xpath('/alipay/is_success').text == 'T',
          error: doc.xpath('//error').text,
