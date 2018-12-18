@@ -208,8 +208,9 @@ module Alipay
         page_execute_url(params)
       end
 
-      def unsign_autodebit(agreement_token, notify_url: nil)
+      def unsign_autodebit(agreement_token, notify_url: nil, scene: 'INDUSTRY|TRAVEL')
         doc = sdk_execute(service: 'alipay.dut.customer.agreement.unsign',
+                          scene: scene,
                           product_code: 'GENERAL_WITHHOLDING_P',
                           external_sign_no: agreement_token,
                           notify_url: notify_url
