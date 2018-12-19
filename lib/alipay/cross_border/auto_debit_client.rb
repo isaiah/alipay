@@ -19,7 +19,7 @@ module Alipay
       def unsign_agreement(token: token, notify_url: nil, scene: 'INDUSTRY|TRAVEL')
         doc = sdk_execute(service: 'alipay.dut.customer.agreement.unsign',
                           scene: scene,
-                          product_code: 'GENERAL_WITHHOLDING_P',
+                          product_code: 'FOREX_GENERAL_WITHHOLDING',
                           external_sign_no: token,
                           notify_url: notify_url
                          )
@@ -29,7 +29,7 @@ module Alipay
 
       def query_agreement(token:, scene: 'INDUSTRY|TRAVEL')
         doc = sdk_execute(service: 'alipay.dut.customer.agreement.query',
-                          product_code: 'GENERAL_WITHHOLDING_P',
+                          product_code: 'FOREX_GENERAL_WITHHOLDING',
                           scene: scene,
                           external_sign_no: token)
         {success: doc.xpath('/alipay/is_success').text == 'T',
@@ -52,8 +52,10 @@ module Alipay
                           agreement_info: "{ \"agreement_no\": \"#{agreement_number}\" }")
         {success: doc.xpath('/alipay/is_success').text == 'T',
          error: doc.xpath('//error').text,
-         transaction_no: doc.xpath('/response/alipay/trade_no').text,
-         result_code: doc.xpath('/response/alipay/result_code').text }
+         transaction_no: doc.xpath('//response/alipay/trade_no').text,
+         result_code: doc.xpath('//response/alipay/result_code').text,
+         detailed_error_code: doc.xpath('//response/alipay/detailed_error_code').text
+        }
       end
 
       def refund(order_id:, amount:, currency:, reason: nil)
