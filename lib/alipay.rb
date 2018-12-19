@@ -1,6 +1,7 @@
 require 'net/http'
 require 'cgi'
 require 'alipay/cross_border/client'
+require 'alipay/cross_border/auto_debit_client'
 require 'alipay/version'
 require 'alipay/utils'
 require 'alipay/sign'
