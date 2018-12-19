@@ -16,11 +16,10 @@ module Alipay
         page_execute_url(params)
       end
 
-      def unsign_agreement(alipay_user_id:, token: token, notify_url: nil, scene: 'INDUSTRY|TRAVEL')
+      def unsign_agreement(token: token, notify_url: nil, scene: 'INDUSTRY|TRAVEL')
         doc = sdk_execute(service: 'alipay.dut.customer.agreement.unsign',
                           scene: scene,
                           product_code: 'GENERAL_WITHHOLDING_P',
-                          alipay_user_id: alipay_user_id,
                           external_sign_no: token,
                           notify_url: notify_url
                          )
@@ -28,11 +27,10 @@ module Alipay
          error: doc.xpath('//error').text}
       end
 
-      def query_agreement(alipay_user_id:, token:, scene: 'INDUSTRY|TRAVEL')
+      def query_agreement(token:, scene: 'INDUSTRY|TRAVEL')
         doc = sdk_execute(service: 'alipay.dut.customer.agreement.query',
                           product_code: 'GENERAL_WITHHOLDING_P',
                           scene: scene,
-                          alipay_user_id: alipay_user_id,
                           external_sign_no: token)
         {success: doc.xpath('/alipay/is_success').text == 'T',
          error: doc.xpath('//error').text,
