@@ -43,6 +43,7 @@ module Alipay
       def initialize(options)
         options = ::Alipay::Utils.stringify_keys(options)
         @env = options['env']
+        @debug = options['debug']
         @url = @env == 'production' ? ALIPAY_GATEWAY_PRODUCTION_NEW : ALIPAY_GATEWAY_SANDBOX_NEW
         @app_id = options['app_id'] || options['partner']
         @sign_type = options['sign_type'] || 'RSA2'
@@ -82,7 +83,7 @@ module Alipay
       end
 
       def debug?
-        @env != 'production'
+        !!@debug
       end
 
       # Generate a url that use to redirect user to Alipay payment page.
