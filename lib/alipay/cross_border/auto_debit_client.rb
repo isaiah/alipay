@@ -3,28 +3,17 @@ require 'alipay/cross_border/client'
 module Alipay
   module CrossBorder
     class AutoDebitClient < Client
-      def sign_agreement(token:, access_channel: 'PC', scene: 'INDUSTRY|TAVEL')
-        sParaTemp = {
-          access_info: '{"channel": "PC"}',
-          scene: 'INDUSTRY|TRAVEL',
+      def sign_agreement(token:, access_channel: 'PC', scene: 'INDUSTRY|TRAVEL')
+        params = {
+          access_info: '{"channel": "' + access_channel + '"}',
           external_sign_no: token,
+          scene: scene,
           third_party_type: 'PARTNER',
-
           service: 'alipay.dut.customer.agreement.page.sign',
           product_code: 'GENERAL_WITHHOLDING_P',
           sales_product_code: 'FOREX_GENERAL_WITHHOLDING'
         }
-        page_execute_url(sParaTemp)
-        #params = {
-        #  access_info: '{"channel": "' + access_channel + '"}',
-        #  external_sign_no: token,
-        #  scene: scene,
-        #  third_party_type: 'PARTNER',
-        #  service: 'alipay.dut.customer.agreement.page.sign',
-        #  product_code: 'GENERAL_WITHHOLDING_P',
-        #  sales_product_code: 'FOREX_GENERAL_WITHHOLDING'
-        #}
-        #page_execute_url(params)
+        page_execute_url(params)
       end
 
       def unsign_agreement(token: token, notify_url: nil, scene: 'INDUSTRY|TRAVEL')
