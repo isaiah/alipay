@@ -29,7 +29,7 @@ module Alipay
 
       def query_agreement(token:, scene: 'INDUSTRY|TRAVEL')
         doc = sdk_execute(service: 'alipay.dut.customer.agreement.query',
-                          product_code: 'FOREX_GENERAL_WITHHOLDING',
+                          product_code: 'GENERAL_WITHHOLDING_P',
                           scene: scene,
                           external_sign_no: token)
         {success: doc.xpath('/alipay/is_success').text == 'T',
