@@ -76,7 +76,7 @@ module Alipay
       end
 
       def query_transaction_status(order_id:)
-        sdk_execute(out_trade_no: order_id, service: 'alipay.acquire.query')
+        doc = sdk_execute(out_trade_no: order_id, service: 'alipay.acquire.query')
         {
           success: doc.xpath('/alipay/is_success').text == 'T',
           error: doc.xpath('/alipay/error'),
