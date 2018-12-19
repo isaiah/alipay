@@ -66,7 +66,7 @@ module Alipay
       end
 
       def refund(order_id:, amount:, currency:, reason: nil)
-        sdk_execute(out_trade_no: order_id,
+        doc = sdk_execute(out_trade_no: order_id,
                     refund_amount: amount,
                     refund_reason: reason,
                     trans_currency: currency,
@@ -80,8 +80,9 @@ module Alipay
         {
           success: doc.xpath('/alipay/is_success').text == 'T',
           error: doc.xpath('/alipay/error'),
-          status: doc.xpath('//trade/trade_status').text,
-          transaction_no: doc.xpath('//trade/trade_no').text,
+          result_code: doc.xpath('//response/alipay/result_code').text,
+          status: doc.xpath('//response/alipay/trade_status').text,
+          transaction_no: doc.xpath('//response/alipay/trade_no').text,
         }
       end
     end
