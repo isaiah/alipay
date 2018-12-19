@@ -74,7 +74,7 @@ module Alipay
       def refund(order_id:, amount:, currency:, transaction_id: nil, reason: nil, refund_id: nil)
         doc = sdk_execute(out_trade_no: order_id,
                           trade_no: transaction_id,
-                          out_request_id: refund_id,
+                          out_request_no: refund_id,
                           refund_amount: amount,
                           refund_reason: reason,
                           trans_currency: currency,
