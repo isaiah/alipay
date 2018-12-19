@@ -76,8 +76,9 @@ module Alipay
         uri = URI(@url)
         uri.query = URI.encode_www_form(prepare_params(params))
         resp = Net::HTTP.get(uri)
-        $stdout.puts resp if debug?
-        Nokogiri::XML(resp)
+        xml = Nokogiri::XML(resp)
+        $stdout.puts xml.to_xml if debug?
+        xml
       end
 
       def debug?
