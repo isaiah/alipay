@@ -42,7 +42,8 @@ module Alipay
       # [:sign_type] default is 'RSA2', support 'RSA2', 'RSA', 'RSA2' is recommended.
       def initialize(options)
         options = ::Alipay::Utils.stringify_keys(options)
-        @url = options['env'] == 'production' ? ALIPAY_GATEWAY_PRODUCTION_NEW : ALIPAY_GATEWAY_SANDBOX_NEW
+        @env = options['env']
+        @url = @env == 'production' ? ALIPAY_GATEWAY_PRODUCTION_NEW : ALIPAY_GATEWAY_SANDBOX_NEW
         @app_id = options['app_id'] || options['partner']
         @sign_type = options['sign_type'] || 'RSA2'
         @app_private_key = options['app_private_key']
@@ -75,7 +76,12 @@ module Alipay
         uri = URI(@url)
         uri.query = URI.encode_www_form(prepare_params(params))
         resp = Net::HTTP.get(uri)
+        $stdout.puts resp if debug?
         Nokogiri::XML(resp)
+      end
+
+      def debug?
+        @env != 'production'
       end
 
       # Generate a url that use to redirect user to Alipay payment page.
@@ -208,13 +214,8 @@ module Alipay
       end
 
       def query_transaction_status(order_id)
-        params = prepare_params(out_trade_no: order_id,
-                                service: 'single_trade_query')
-        uri = URI(@url)
-        uri.query = URI.encode_www_form(params)
-        resp = Net::HTTP.get(uri)
-        doc = Nokogiri::XML(resp)
-
+        doc = sdk_execute(out_trade_no: order_id,
+                          service: 'single_trade_query')
         {
           success: doc.xpath('/alipay/is_success').text == 'T',
           error: doc.xpath('/alipay/error'),

@@ -62,13 +62,19 @@ module Alipay
                     refund_reason: reason,
                     trans_currency: currency,
                     service: 'alipay.acquire.refund')
+        {success: doc.xpath('/alipay/is_success').text == 'T',
+         error: doc.xpath('//error').text}
       end
 
       def query_transaction_status(order_id:)
         sdk_execute(out_trade_no: order_id, service: 'alipay.acquire.query')
+        {
+          success: doc.xpath('/alipay/is_success').text == 'T',
+          error: doc.xpath('/alipay/error'),
+          status: doc.xpath('//trade/trade_status').text,
+          transaction_no: doc.xpath('//trade/trade_no').text,
+        }
       end
-
-
     end
   end
 end
