@@ -53,7 +53,7 @@ module Alipay
                           show_url: show_url,
                           subject: subject,
                           body: description,
-                          currency: currency,
+                          trans_currency: currency,
                           scene: scene,
                           total_fee: amount,
                           agreement_info: "{ \"agreement_no\": \"#{agreement_number}\" }")
