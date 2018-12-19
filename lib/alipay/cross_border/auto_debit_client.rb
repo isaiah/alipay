@@ -36,7 +36,12 @@ module Alipay
                           external_sign_no: token)
         {success: doc.xpath('/alipay/is_success').text == 'T',
          error: doc.xpath('//error').text,
-         status: doc.xpath('//status').text}
+         agreement_detail: doc.xpath('//userAgreementInfo/agreement_detail').text,
+         agreement_number: doc.xpath('//userAgreementInfo/agreement_no').text,
+         sign_time: doc.xpath('//userAgreementInfo/sign_time').text,
+         sign_modify_time: doc.xpath('//userAgreementInfo/sign_modify_time').text,
+         expiration_time: doc.xpath('//userAgreementInfo/invalid_time').text,
+         status: doc.xpath('//userAgreementInfo/status').text}
       end
 
       def charge(agreement_number:, amount:, currency:, order_id:,
