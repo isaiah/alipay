@@ -72,7 +72,11 @@ module Alipay
                     trans_currency: currency,
                     service: 'alipay.acquire.refund')
         {success: doc.xpath('/alipay/is_success').text == 'T',
-         error: doc.xpath('//error').text}
+         error: doc.xpath('//error').text,
+         result_code: doc.xpath('//response/alipay/result_code').text,
+         refund_amount: doc.xpath('//response/alipay/refund_fee').text,
+         detail_error_code: doc.xpath('//response/alipay/detail_error_code').text,
+        }
       end
 
       def query_transaction_status(order_id:)
