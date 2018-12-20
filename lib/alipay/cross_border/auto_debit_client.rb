@@ -69,13 +69,15 @@ module Alipay
       # @transaction_id Alipay transaction serial number
       #   if both order_id and transaction_id are provided, transaction_id prevail
       # @refund_id if this is not supplied, it's a full refund
-      def refund(order_id:, amount:, currency:, transaction_id: nil, reason: nil, refund_id: nil)
+      def refund(order_id:, amount:, currency:, transaction_id: nil, reason: nil,
+                 refund_id: nil, sync: true)
         doc = sdk_execute(out_trade_no: order_id,
                           trade_no: transaction_id,
                           out_request_no: refund_id,
                           refund_amount: amount,
                           refund_reason: reason,
                           trans_currency: currency,
+                          sync_flag: sync ? 'Y' : 'N',
                           service: 'alipay.acquire.refund')
         {success: doc.xpath('/alipay/is_success').text == 'T',
          error: doc.xpath('//error').text,
