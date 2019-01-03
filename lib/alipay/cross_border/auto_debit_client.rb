@@ -43,7 +43,7 @@ module Alipay
       end
 
       def charge(agreement_number:, amount:, currency:, order_id:,
-                 subject:, description:, notify_url:, show_url:, scene: 'INDUSTRY|TRAVEL')
+                 subject:, description:, show_url:, notify_url: nil, scene: 'INDUSTRY|TRAVEL')
         doc = sdk_execute(service: 'alipay.acquire.createandpay',
                           product_code: 'FOREX_GENERAL_WITHHOLDING',
                           out_trade_no: order_id,
@@ -60,6 +60,7 @@ module Alipay
          error: doc.xpath('//error').text,
          transaction_no: doc.xpath('//response/alipay/trade_no').text,
          result_code: doc.xpath('//response/alipay/result_code').text,
+         alipay_logon_id: doc.xpath('//response/alipay/buyer_logon_id').text,
          detailed_error_code: doc.xpath('//response/alipay/detail_error_code').text
         }
       end
@@ -95,6 +96,7 @@ module Alipay
           result_code: doc.xpath('//response/alipay/result_code').text,
           status: doc.xpath('//response/alipay/trade_status').text,
           transaction_no: doc.xpath('//response/alipay/trade_no').text,
+          alipay_logon_id: doc.xpath('//response/alipay/buyer_logon_id').text,
         }
       end
     end
