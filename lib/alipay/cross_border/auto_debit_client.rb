@@ -39,6 +39,7 @@ module Alipay
          sign_time: doc.xpath('//userAgreementInfo/sign_time').text,
          sign_modify_time: doc.xpath('//userAgreementInfo/sign_modify_time').text,
          expiration_time: doc.xpath('//userAgreementInfo/invalid_time').text,
+         alipay_user_id: doc.xpath('//userAgreementInfo/principal_id').text,
          status: doc.xpath('//userAgreementInfo/status').text}
       end
 
