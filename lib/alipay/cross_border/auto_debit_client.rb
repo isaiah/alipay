@@ -98,6 +98,8 @@ module Alipay
           status: doc.xpath('//response/alipay/trade_status').text,
           transaction_no: doc.xpath('//response/alipay/trade_no').text,
           alipay_logon_id: doc.xpath('//response/alipay/buyer_logon_id').text,
+          detailed_error_code: doc.xpath('//response/alipay/detail_error_code').text,
+          detailed_error_desc: doc.xpath('//response/alipay/detail_error_des').text,
         }
       end
     end
